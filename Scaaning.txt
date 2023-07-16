@@ -1,0 +1,7 @@
+
+
+
+netdiscover								Local ip Scaning 
+nmap									Network exploration tool and security / port scanner
+enum4linux 								get userlist,get machine list,get sharelist,get password policy information,get group and member list
+   

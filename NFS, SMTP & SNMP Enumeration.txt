@@ -1,0 +1,63 @@
+									Network File System (NFS)
+
+	nmap $IP -p 111 --script="nfs-*"					         -> scan NFS with nmap scripts 
+	rpcinfo -p $IP 										         -> Scan RPC and enum
+	showmount -e $IP                                             -> Show Mounted files and on Server 
+	mount -t nfs $IP:/* /tmp/meta				                 -> Mount rpc file on local Machine
+	unmount /tmp/meta											         -> Unmount rpc
+
+Exploit:
+	1-Search about remote procedure call(rpc) 							 -> the NFS Port 111
+		. with Nmap    -> nmap $IP -p 111 --script="nfs-*"		 
+		. with rpcinfo -> rpcinfo -p $IP 
+	2-Show the mounted file on this server 
+		showmount -e $IP
+	3-if There are any file you can mount it in you local machine 
+		sudo mount -t nfs $IP:/* /tmp/meta
+notes:
+	mrpc														         -> Microsoft Remote Procedure Call
+	rpc                                                                  -> Remote Procedure Call
+___________________________________________________________________________________________________________
+
+									Simple Mail Transfer Protocol (SMTP)  
+
+	smtp-user-enum -M VRFY -U users.txt -t $IP 			         -> Enum Users hint: You can use -w if the server slow in response 
+	nmap $IP --scripts="usr/share/nmap/scripts/smtp-..et"  		 -> You Can use nmap scripts 
+
+Exploit:
+	1-Search about SMTP services
+		nmap -sV -p0- 192.168.1.10
+	2-Try To Know SMTP Version 
+		use metasploit medule search smtp_version
+	3-Try To Connect with it with NetCat 
+		nc -nvv 192.168.1.10 25
+	4-Show the available commands on the remote server
+		nmap -p 25 --script=smtp-commands 192.168.1.2 
+	5-Try to Enum Users
+		. with nmap            ->  nmap -p 25 --script=smtp-enum-users $IP 
+		. or                   ->  nmap --script smtp-enum-users.nse [--script-args smtp-enum-users.methods={EXPN,...},...] -p 25,465,587 $IP
+		. with smtp-user-enum  ->  smtp-user-enum -M VRFY -u root -t 192.168.1.2 -w 20   hint -<+>- -w if the the server slow in response 
+	6-Try to use UserName in any exploit Like SSH Bruteforce using hydra
+
+___________________________________________________________________________________________________________
+
+									Simple Network(device) Management Protocole (SNMP)
+
+	nmap -sU -p 161 --script="usr/share/nmap/scripts/snmp-..et"			 -> You Can Use nmap scripts
+	snmpwalk -v1 -c public												 -> used to All target info
+note:
+	You can use " search snmp_enum" in metasploite to get arranged(sorted) data
+	MIB -> mean Management Information Base -> refere to devices and network info,works 
+	OID	-> Object Identifier				-> Id Number of MIB
+
+
+Exploit:
+	1-Scan if service runing or not
+		nmap -sU -p 161 -T5 -sV 192.168.1.14
+		nmap -sU -p 161 -sV --script="snmp-win32-services.nse" 192.168.1.14
+	2-if there are password use nmap (NSE)
+		nmap -sU -p 161 -sV --script="snmp-brute.nse" 192.168.1.14
+	3-use snmpwalk to uses SNMP GETNEXT requests to query a network entity for a tree of information
+		snmpwalk -v1 -c pass 192.168.1.10
+	4-Use Metasploit to show arrang Result
+		 search about snmp_enum                         -> auxiliary/scanner/snmp/snmp_enum
