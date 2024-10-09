@@ -83,7 +83,7 @@ nbtscan -r $IP
 ```bash
 smbclient -L $IP
 smbclient //$IP/file/path
-smbclient //$IP/file/path -u user -p pass
+smbclient //$IP/file/path -U user -P pass
 smbmap -H $IP -u Mohammed
 smbmap -H $IP -u Mohammed -p ""
 ```
